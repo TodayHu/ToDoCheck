@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 
+@objc(ToDoItem)
 class ToDoItem: NSManagedObject {
 
     @NSManaged var name: String

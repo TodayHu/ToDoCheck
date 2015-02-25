@@ -7,17 +7,29 @@
 //
 
 import UIKit
+import DataSilo
+import CoreData
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var toDoTextField: UITextField!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+
+        
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @IBAction func saveTapped(sender: AnyObject) {
+        
+        var context = CoreDataStack.sharedInstance.managedObjectContext!
+        
+        var item = NSEntityDescription.insertNewObjectForEntityForName("ToDoItem", inManagedObjectContext: context) as ToDoItem
+        item.name = self.toDoTextField.text
+        context.save(nil)
+        
     }
 
 

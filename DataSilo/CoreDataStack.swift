@@ -29,6 +29,9 @@ public class CoreDataStack: NSObject {
     
     lazy var managedObjectModel: NSManagedObjectModel = {
         // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
+        
+        let bundle = NSBundle(forClass: CoreDataStack.classForCoder())
+        
         let modelURL = NSBundle.mainBundle().URLForResource("ToDoCheck", withExtension: "momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
         }()
@@ -36,8 +39,13 @@ public class CoreDataStack: NSObject {
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
         // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
+        
+        var manager = NSFileManager.defaultManager()
+        var container = manager.containerURLForSecurityApplicationGroupIdentifier("group.com.DPG.todo")
+        var url = container!.URLByAppendingPathComponent("ToDoCheck.sqlite")
+        
         var coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("ToDoCheck.sqlite")
+        // let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("ToDoCheck.sqlite")
         var error: NSError? = nil
         var failureReason = "There was an error creating or loading the application's saved data."
         if coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil, error: &error) == nil {
@@ -57,7 +65,7 @@ public class CoreDataStack: NSObject {
         return coordinator
         }()
     
-    lazy var managedObjectContext: NSManagedObjectContext? = {
+    public lazy var managedObjectContext: NSManagedObjectContext? = {
         // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.) This property is optional since there are legitimate error conditions that could cause the creation of the context to fail.
         let coordinator = self.persistentStoreCoordinator
         if coordinator == nil {

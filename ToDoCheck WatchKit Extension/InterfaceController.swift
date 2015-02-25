@@ -8,14 +8,36 @@
 
 import WatchKit
 import Foundation
+import DataSilo
+import CoreData
 
 
 class InterfaceController: WKInterfaceController {
 
+    @IBOutlet weak var table: WKInterfaceTable!
+    
+    
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
         // Configure interface objects here.
+        var context = CoreDataStack.sharedInstance.managedObjectContext!
+        
+        let request = NSFetchRequest(entityName: "ToDoItem")
+        let items = context.executeFetchRequest(request, error: nil) as [ToDoItem]
+        
+        self.table.setNumberOfRows(items.count, withRowType: "ToDoRow")
+        
+        var theCount = 0
+        
+        for item in items {
+            
+            let row = self.table.rowControllerAtIndex(theCount) as ToDoTableRowController
+            row.nameLabel.setText(item.name)
+            theCount++
+            
+        }
+        
     }
 
     override func willActivate() {
